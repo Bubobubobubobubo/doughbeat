@@ -1,52 +1,46 @@
 import { getSimpleDynamicWorklet } from "./helpers.js";
 let ac;
-let oldGainNode;
-let newGainNode;
-let hz = 44100;
-let oldWorklet = undefined;
-let currentWorklet = undefined;
 let crossfadeDuration = 2; // Adjust the crossfade duration as needed
+let workerPile = [];
 
-const fade = async (worklet) => {
-  oldWorklet = worklet;
-  oldGainNode = ac.createGain();
-  oldGainNode.gain.setValueAtTime(1, ac.currentTime);
-  oldGainNode.gain.linearRampToValueAtTime(0, ac.currentTime + crossfadeDuration);
-  oldWorklet.node.disconnect();
-  oldWorklet.node.connect(oldGainNode);
-  oldWorklet.stop(ac.currentTime + crossfadeDuration);
-  oldWorklet = null;
-  stopButton.style.display = "none";
-  playButton.style.display = "block";
-};
+
 
 const stop = async () => {
   // Stop all sounds
   ac = ac || new AudioContext();
-  currentWorklet.stop();
-  try {
-    oldWorklet.stop();
-  } catch (e) {
-    console.log("no old worklet");
-  
+  for (worker in workerPile) {
+    worker.stop();
   }
 };
 
+const addNewSynth = async (code) => {
+  let synth = {
+    node: await getSimpleDynamicWorklet(ac, code),
+    gain: ac.createGain(),
+    code: code,
+  };
+  synth.gain.connect(ac.destination);
+  synth.node.node.connect(synth.gain);
+  synth.gain.gain.setValueAtTime(0, ac.currentTime);
+  synth.gain.gain.linearRampToValueAtTime(1, ac.currentTime + crossfadeDuration);
+  workerPile.push(synth);
+}
+
 const update = async (code) => {
   ac = ac || new AudioContext();
-  // await ac.resume();
-
-  if (currentWorklet !== undefined)
-    fade(currentWorklet);
-
-  // Create a new worklet
-  currentWorklet = await getSimpleDynamicWorklet(ac, code);
-  // Create a GainNode for controlling the volume during crossfade
-  newGainNode = ac.createGain();
-  newGainNode.connect(ac.destination);
-  currentWorklet.node.connect(newGainNode);
-  newGainNode.gain.setValueAtTime(0, ac.currentTime);
-  newGainNode.gain.linearRampToValueAtTime(1, ac.currentTime + crossfadeDuration);
+  console.log(workerPile);
+  if (workerPile.length < 2) {
+    addNewSynth(code);
+  } else {
+    let oldest = workerPile.shift();
+    oldest.gain.gain.setValueAtTime(1, ac.currentTime);
+    oldest.gain.gain.linearRampToValueAtTime(0, ac.currentTime + crossfadeDuration);
+    setTimeout(() => {
+      oldest.node.stop();
+      oldest.gain.disconnect();
+      addNewSynth(code);
+    }, crossfadeDuration * 1000);
+  }
   window.location.hash = "#" + btoa(code);
   stopButton.style.display = "block";
   playButton.style.display = "none";

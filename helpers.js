@@ -1,7 +1,6 @@
 export async function getSimpleDynamicWorklet(ac, code, hz = ac.sampleRate) {
     const name = `simple-custom-${Date.now()}`;
     let srcSampleRate = hz || ac.sampleRate;
-    // let sampleRatio = srcSampleRate / ac.sampleRate;
     const workletCode = `${code}
           class MyProcessor extends AudioWorkletProcessor {
     constructor() {
