@@ -41,7 +41,7 @@ const update = async (code) => {
   console.log("Evaluting code: {}", code);
 
   // Maximum of two synths at a time
-  if (workerPile.length < 2) {
+  if (workerPile.length < 3) {
     addNewSynth(code);
   } else {
     addNewSynth(code);

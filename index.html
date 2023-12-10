@@ -1,4 +1,25 @@
 <!doctype html>
+
+<head>
+  <meta charset="utf-8">
+  <title>DoughBeat (JITLove Edition)</title>
+  <meta name="description" content="doughbeat">
+  <meta name="author" content="doughbeat">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    @keyframes backgroundAnimation {
+      0% {
+        background-color: black;
+      }
+      50% {
+        background-color: #202020;
+      }
+      100% {
+        background-color: black;
+      }
+    }
+  </style>
+</head>
 <html style="height: 100vh">
   <body style="margin: 0; padding: 0; height: 100%; width: 100%; display: flex">
     <dialog open
@@ -30,6 +51,7 @@
         border: 0;
         outline: none;
         padding: 10px;
+        animation: backgroundAnimation 30s infinite;
       "
     ></textarea>
     <button
