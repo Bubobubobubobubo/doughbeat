@@ -1,6 +1,24 @@
 <!doctype html>
 <html style="height: 100vh">
   <body style="margin: 0; padding: 0; height: 100%; width: 100%; display: flex">
+    <dialog open
+      style="
+      position: absolute;
+      border: 5px solid gray;
+      float: left;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      "
+    >
+      <div style="text-align: center;">
+        <p>Welcome to doughbeat, a very minimal bytebeat livecoding editor.</p>
+        <p>Click <b><em>OK</em></b> and press <b><em>ctrl+enter</em></b> to evaluate the code!</p>
+        <p>There are no further instructions. Read <a href="https://github.com/felixroos/doughbeat">the repo</a> to find out more!</p>
+      <form method="dialog">
+        <button id="popup" style="width:100%">OK</button>
+      </form>
+    </dialog>
     <textarea
       id="code"
       spellcheck="false"

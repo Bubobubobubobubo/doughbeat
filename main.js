@@ -1,14 +1,14 @@
 // audio init
 console.log(
   `Welcome to doughbeat, a very minimal bytebeat livecoding editor..
-  
 Click into the page and press ctrl+enter to evaluate the code!
-  
 There are no further instructions. Read https://github.com/felixroos/doughbeat to find out more!
   `,
 );
 let ac;
-document.addEventListener("click", function initAudio() {
+let popup = document.getElementById("popup");
+popup.addEventListener("click", function initAudio() {
+  console.log("Ok clic");
   ac = new AudioContext();
   ac.resume();
   document.removeEventListener("click", initAudio);
